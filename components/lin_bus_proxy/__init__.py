@@ -24,10 +24,7 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Required(CONF_ALDE_UART): cv.use_id(uart.UARTComponent),
         cv.Optional(CONF_PROXY_MODE, default=True): cv.boolean,
         cv.Optional(CONF_LOGGING_ENABLED, default=True): cv.boolean,
-        cv.Optional(CONF_LOG_SENSOR): cv.union(
-            cv.use_id(text_sensor.TextSensor),
-            text_sensor.text_sensor_schema(),
-        ),
+        cv.Optional(CONF_LOG_SENSOR): text_sensor.text_sensor_schema(),
     }
 ).extend(cv.COMPONENT_SCHEMA)
 
@@ -45,12 +42,6 @@ async def to_code(config):
     cg.add(var.set_logging_enabled(config[CONF_LOGGING_ENABLED]))
     
     if CONF_LOG_SENSOR in config:
-        log_sensor_config = config[CONF_LOG_SENSOR]
-        if isinstance(log_sensor_config, str):
-            # ID-Referenz (String)
-            sens = await cg.get_variable(cv.declare_id(text_sensor.TextSensor)(log_sensor_config))
-        else:
-            # Vollständiges Schema (Dict)
-            sens = await text_sensor.new_text_sensor(log_sensor_config)
+        sens = await text_sensor.new_text_sensor(config[CONF_LOG_SENSOR])
         cg.add(var.set_log_sensor(sens))
 
