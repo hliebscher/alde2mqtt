@@ -1,0 +1,132 @@
+esphome:
+  name: alde-heizung
+  platform: ESP32
+  board: esp32dev
+  platformio_options:
+    board_build.f_cpu: 240000000L
+
+wifi:
+  networks:
+    - ssid: !secret wifi_ssid
+      password: !secret wifi_password
+  
+  # Fallback Hotspot
+  ap:
+    ssid: "Alde-Heizung Fallback"
+    password: "fallback123"
+
+# MQTT Integration
+mqtt:
+  broker: !secret mqtt_broker
+  port: 1883
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  discovery: true
+  discovery_prefix: homeassistant
+
+# Logger für Debugging
+logger:
+  level: DEBUG
+
+# UART für LIN Bus (WomoLIN Konfiguration)
+# GPIO 12/13 (TXD2/RXD2 LIN2) für Alde-Heizung
+# Wichtig: IO16/17 werden vom Ethernet PHY verwendet!
+uart:
+  - id: lin_uart_bus
+    tx_pin: 12  # TXD2 LIN2
+    rx_pin: 13  # RXD2 LIN2
+    baud_rate: 9600
+    data_bits: 8
+    parity: NONE
+    stop_bits: 2
+
+# Externe Komponente einbinden
+external_components:
+  - source:
+      type: local
+      path: components
+
+# Alde TIN Bus Komponente
+alde_tin_bus:
+  uart_id: lin_uart_bus
+  update_interval: 10s
+  
+  # Sensoren
+  air_temperature:
+    name: "Alde Raumtemperatur"
+  water_temperature:
+    name: "Alde Wassertemperatur"
+  status:
+    name: "Alde Status"
+  
+  # Schalter
+  power:
+    name: "Alde Heizung"
+    id: alde_power_switch
+  fuel_gas:
+    name: "Alde Gas Modus"
+    id: alde_fuel_gas_switch
+  fuel_electro:
+    name: "Alde Elektro Modus"
+    id: alde_fuel_electro_switch
+  
+  # Auswahl
+  vent_speed:
+    name: "Alde Lüftergeschwindigkeit"
+    id: alde_vent_speed_select
+  electro_power:
+    name: "Alde Elektroleistung"
+    id: alde_electro_power_select
+
+# Zahlen für Temperatur-Sollwerte
+number:
+  - platform: template
+    name: "Alde Raumtemperatur Sollwert"
+    id: alde_air_setpoint
+    min_value: 5.0
+    max_value: 35.0
+    step: 0.5
+    unit_of_measurement: "°C"
+    mode: box
+    optimistic: true
+    set_action:
+      - lambda: |-
+          id(alde_tin_bus).set_air_temperature(x);
+          
+  - platform: template
+    name: "Alde Wassertemperatur Sollwert"
+    id: alde_water_setpoint
+    min_value: 20.0
+    max_value: 70.0
+    step: 1.0
+    unit_of_measurement: "°C"
+    mode: box
+    optimistic: true
+    set_action:
+      - lambda: |-
+          id(alde_tin_bus).set_water_temperature(x);
+
+# Schalter-Aktionen für Kraftstoffmodus
+switch:
+  - platform: template
+    name: "Alde Heizung Ein/Aus"
+    id: alde_power_template
+    optimistic: true
+    turn_on_action:
+      - lambda: |-
+          // Heizung einschalten (Gas + Elektro)
+          id(alde_tin_bus).set_fuel_mode(3);
+          id(alde_power_switch).turn_on();
+    turn_off_action:
+      - lambda: |-
+          // Heizung ausschalten
+          id(alde_tin_bus).set_fuel_mode(0);
+          id(alde_power_switch).turn_off();
+
+# Interval-Komponente für regelmäßige Statusabfrage (optional, wird bereits von Komponente gemacht)
+# interval:
+#   - interval: 10s
+#     then:
+#       - lambda: |-
+#           id(alde_tin_bus).request_status();
+
