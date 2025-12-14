@@ -24,7 +24,7 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Required(CONF_ALDE_UART): cv.use_id(uart.UARTComponent),
         cv.Optional(CONF_PROXY_MODE, default=True): cv.boolean,
         cv.Optional(CONF_LOGGING_ENABLED, default=True): cv.boolean,
-        cv.Optional(CONF_LOG_SENSOR): cv.any(
+        cv.Optional(CONF_LOG_SENSOR): cv.union(
             cv.use_id(text_sensor.TextSensor),
             text_sensor.text_sensor_schema(),
         ),

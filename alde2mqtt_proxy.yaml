@@ -1,11 +1,14 @@
 esphome:
   name: alde-proxy
-  platform: ESP32
+  friendly_name: WOMOLIN alde-proxy
+  # https://womolin.de/products/womolin-lin-controller/
+  
+esp32:
   board: esp32dev
   framework:
     type: arduino
   flash_size: 16MB
-  
+
 wifi:
   networks:
     - ssid: !secret wifi_ssid
@@ -15,6 +18,17 @@ wifi:
     ssid: "Alde-Proxy Fallback"
     password: "fallback123"
 
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "gn0KvTuXtbsQhSPhtYyf+/7L8B2wDm00Lg+kpRCkplw="
+  reboot_timeout: 0s
+
+ota:
+  - platform: esphome
+    password: "146fab7812ffd6ffadef3e9ca1d9d563"
+
+
 mqtt:
   broker: !secret mqtt_broker
   port: 1883
@@ -23,16 +37,6 @@ mqtt:
   # password: !secret mqtt_password
   discovery: true
   discovery_prefix: homeassistant
-
-# Enable Home Assistant API
-api:
-  encryption:
-    key: "AxZ09z4S2EJIMxf9X1eF2cV4s8ggxyBEynz8P+LPYLo="
-  reboot_timeout: 0s
-
-ota:
-  - platform: esphome
-    password: "43b6c49d63cd1c9b9c75191b95563641"
 
 logger:
   level: DEBUG
