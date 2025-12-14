@@ -2,9 +2,10 @@ esphome:
   name: alde-heizung
   platform: ESP32
   board: esp32dev
-  platformio_options:
-    board_build.f_cpu: 240000000L
-
+  framework:
+    type: arduino
+  flash_size: 16MB
+  
 wifi:
   networks:
     - ssid: !secret wifi_ssid
@@ -19,10 +20,21 @@ wifi:
 mqtt:
   broker: !secret mqtt_broker
   port: 1883
-  username: !secret mqtt_username
-  password: !secret mqtt_password
+  # Optional: MQTT-Authentifizierung
+  # username: !secret mqtt_username
+  # password: !secret mqtt_password
   discovery: true
   discovery_prefix: homeassistant
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: "AxZ09z4S2EJIMxf9X1eF2cV4s8ggxyBEynz8P+LPYLo="
+  reboot_timeout: 0s
+
+ota:
+  - platform: esphome
+    password: "43b6c49d63cd1c9b9c75191b95563641"
 
 # Logger für Debugging
 logger:
