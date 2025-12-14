@@ -78,6 +78,7 @@ external_components:
 
 # LIN Bus Proxy Komponente
 lin_bus_proxy:
+  id: proxy
   truma_uart: truma_uart
   alde_uart: alde_uart
   proxy_mode: true
@@ -95,7 +96,7 @@ sensor:
     accuracy_decimals: 0
     update_interval: 10s
     lambda: |-
-      return id(lin_bus_proxy).get_truma_to_alde_count();
+      return id(proxy).get_truma_to_alde_count();
       
   - platform: template
     name: "Proxy Alde->Truma Frames"
@@ -104,7 +105,7 @@ sensor:
     accuracy_decimals: 0
     update_interval: 10s
     lambda: |-
-      return id(lin_bus_proxy).get_alde_to_truma_count();
+      return id(proxy).get_alde_to_truma_count();
 
 # Schalter zum Aktivieren/Deaktivieren des Proxy-Modus
 switch:
@@ -115,11 +116,11 @@ switch:
     restore_mode: RESTORE_DEFAULT_ON
     turn_on_action:
       - lambda: |-
-          id(lin_bus_proxy).set_proxy_mode(true);
+          id(proxy).set_proxy_mode(true);
           ESP_LOGI("proxy", "Proxy-Modus aktiviert");
     turn_off_action:
       - lambda: |-
-          id(lin_bus_proxy).set_proxy_mode(false);
+          id(proxy).set_proxy_mode(false);
           ESP_LOGI("proxy", "Proxy-Modus deaktiviert");
           
   - platform: template
@@ -129,10 +130,10 @@ switch:
     restore_mode: RESTORE_DEFAULT_ON
     turn_on_action:
       - lambda: |-
-          id(lin_bus_proxy).set_logging_enabled(true);
+          id(proxy).set_logging_enabled(true);
           ESP_LOGI("proxy", "Logging aktiviert");
     turn_off_action:
       - lambda: |-
-          id(lin_bus_proxy).set_logging_enabled(false);
+          id(proxy).set_logging_enabled(false);
           ESP_LOGI("proxy", "Logging deaktiviert");
 
