@@ -43,8 +43,10 @@ uart:
 # Externe Komponente einbinden
 external_components:
   - source:
-      type: local
-      path: components
+      type: git
+      url: https://github.com/hliebscher/alde2mqtt
+      ref: main
+    components: [alde_tin_bus]
 
 # Alde TIN Bus Komponente
 alde_tin_bus:

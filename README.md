@@ -93,15 +93,35 @@ eth->phy_reg_write(eth, ksz80xx->addr, 0x1f, 0x80);
 
 ## Installation
 
-### 1. Komponente kopieren
+### 1. Komponenten einbinden
+
+Die Komponenten werden automatisch über GitHub eingebunden:
+
+```yaml
+external_components:
+  - source:
+      type: git
+      url: https://github.com/hliebscher/alde2mqtt
+      ref: main
+    components: [alde_tin_bus, lin_bus_proxy]
+```
+
+**Verfügbare Komponenten:**
+- `alde_tin_bus` - TIN-Bus Steuerung für Alde-Heizung
+- `lin_bus_proxy` - Proxy-Komponente für Protokoll-Analyse
+
+**Alternative: Lokale Installation**
+
+Falls du die Komponenten lokal verwenden möchtest:
 
 ```bash
 # Im ESPHome-Verzeichnis
 mkdir -p ~/.esphome/custom_components
 cp -r components/alde_tin_bus ~/.esphome/custom_components/
+cp -r components/lin_bus_proxy ~/.esphome/custom_components/
 ```
 
-Oder als externe Komponente in der YAML-Datei:
+Dann in der YAML-Datei:
 
 ```yaml
 external_components:

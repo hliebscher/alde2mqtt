@@ -59,8 +59,10 @@ uart:
 # Externe Komponente einbinden
 external_components:
   - source:
-      type: local
-      path: components
+      type: git
+      url: https://github.com/hliebscher/alde2mqtt
+      ref: main
+    components: [lin_bus_proxy, alde_tin_bus]
 
 # LIN Bus Proxy Komponente
 lin_bus_proxy:
