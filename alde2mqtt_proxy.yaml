@@ -76,6 +76,14 @@ external_components:
       ref: main
     components: [lin_bus_proxy, alde_tin_bus]
 
+# Text Sensor für Proxy-Logging (erforderlich für lin_bus_proxy)
+text_sensor:
+  - platform: template
+    name: "LIN Bus Proxy Log"
+    id: proxy_log
+    lambda: |-
+      return {"No data yet"};
+
 # LIN Bus Proxy Komponente
 lin_bus_proxy:
   id: proxy
@@ -83,9 +91,7 @@ lin_bus_proxy:
   alde_uart: alde_uart
   proxy_mode: true
   logging_enabled: true
-  log_sensor:
-    name: "LIN Bus Proxy Log"
-    id: proxy_log
+  log_sensor: proxy_log
 
 # Sensoren für Statistik
 sensor:
