@@ -153,6 +153,7 @@ void LinBusProxyComponent::analyze_frame(uint8_t *data, uint8_t len, const char 
 }
 
 void LinBusProxyComponent::log_frame(uint8_t *data, uint8_t len, const char *direction) {
+#ifdef USE_TEXT_SENSOR
   if (this->log_sensor_ == nullptr) return;
   
   // Hex-String erstellen
@@ -168,7 +169,14 @@ void LinBusProxyComponent::log_frame(uint8_t *data, uint8_t len, const char *dir
   }
   
   // Text-Sensor aktualisieren (nur letzte Nachricht)
+#ifdef USE_TEXT_SENSOR
   this->log_sensor_->publish_state(hex_string);
+#endif
+#else
+  (void)data;
+  (void)len;
+  (void)direction;
+#endif
 }
 
 }  // namespace lin_bus_proxy

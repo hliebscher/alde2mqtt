@@ -2,7 +2,10 @@
 
 #include "esphome.h"
 #include "esphome/components/uart/uart.h"
+
+#ifdef USE_TEXT_SENSOR
 #include "esphome/components/text_sensor/text_sensor.h"
+#endif
 
 namespace esphome {
 namespace lin_bus_proxy {
@@ -20,7 +23,11 @@ class LinBusProxyComponent : public Component {
   void set_alde_uart(uart::UARTComponent *uart) { alde_uart_ = uart; }
   
   // Text-Sensor für Logging
+#ifdef USE_TEXT_SENSOR
   void set_log_sensor(text_sensor::TextSensor *sensor) { log_sensor_ = sensor; }
+#else
+  void set_log_sensor(void *sensor) { (void)sensor; }  // Dummy wenn nicht verfügbar
+#endif
   
   // Proxy-Modus
   void set_proxy_mode(bool enabled) { proxy_mode_ = enabled; }
@@ -36,7 +43,11 @@ class LinBusProxyComponent : public Component {
   uart::UARTComponent *alde_uart_{nullptr};
   
   // Text-Sensor für Logging
+#ifdef USE_TEXT_SENSOR
   text_sensor::TextSensor *log_sensor_{nullptr};
+#else
+  void *log_sensor_{nullptr};
+#endif
   
   // Proxy-Modus
   bool proxy_mode_{true};

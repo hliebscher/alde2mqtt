@@ -4,7 +4,7 @@ from esphome.components import uart, text_sensor
 from esphome.const import CONF_ID
 
 CODEOWNERS = ["@hliebscher"]
-DEPENDENCIES = ["uart", "text_sensor"]
+DEPENDENCIES = ["uart"]
 
 lin_bus_proxy_ns = cg.esphome_ns.namespace("lin_bus_proxy")
 LinBusProxyComponent = lin_bus_proxy_ns.class_(
